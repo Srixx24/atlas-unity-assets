@@ -1,13 +1,26 @@
+using System.Collections;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
 
 public class DatabasesManager : EditorWindow
 {
+    private ArmorDatabase armorDatabase;
+    private PotionDatabase potionDatabase;
+    private WeaponDatabase weaponDatabase;
+
+    
     [MenuItem("Window/Item Manager/Databases Manager")]
     public static void ShowWindow()
     {
         GetWindow<DatabasesManager>("Databases Manager");
+    }
+
+    private void Start()
+    {
+        weaponDatabase = new WeaponDatabase();
+        potionDatabase = new PotionDatabase();
+        armorDatabase = new ArmorDatabase();
     }
 
     private void OnGUI()
@@ -34,8 +47,41 @@ public class DatabasesManager : EditorWindow
         EditorGUILayout.Space();
 
         // Buttons to access other windows
-        // if (GUILayout.Button("Weapon Database")) WeaponDatabase.ShowWindow();
-        // if (GUILayout.Button("Potion Database")) PotionDatabase.ShowWindow();
-        // if (GUILayout.Button("Armor Database")) ArmorDatabase.ShowWindow();
+
+        void OpenPotionDatabase()
+        {
+            if (GUILayout.Button("Potion Database"))
+            {
+                if (potionDatabase == null)
+                {
+                    potionDatabase = new PotionDatabase();
+                }
+                PotionDatabase.ShowWindow();
+            }
+        }
+
+        void OpenWeaponDatabase()
+        {
+            if (GUILayout.Button("Weapon Database"))
+            {
+                if (weaponDatabase == null)
+                {
+                    weaponDatabase = new WeaponDatabase();
+                }
+                WeaponDatabase.ShowWindow();
+            }
+        }
+
+        void OpenArmorDatabase()
+        {
+            if (GUILayout.Button("Armor Database"))
+            {
+                if (armorDatabase == null)
+                {
+                    armorDatabase = new ArmorDatabase();
+                }
+                ArmorDatabase.ShowWindow();
+            }
+        }
     }
 }

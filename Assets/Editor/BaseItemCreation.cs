@@ -11,13 +11,17 @@ public abstract class BaseItemCreation<T> : EditorWindow where T : BaseItem
     protected float baseValue;
     protected int requiredLevel;
     protected Rarity rarity;
+
+    private WeaponCreation weaponCreation;
+    private ArmorCreation armorCreation;
+    private PotionCreation potionCreation;
     
     public static void ShowWindow()
     {
         EditorWindow.GetWindow(typeof(BaseItemCreation<T>), true, "Create New Item");
     }
 
-    protected void DrawCommonFields()
+    protected virtual void DrawItemProperties()
     {
         itemName = EditorGUILayout.TextField("Name:", itemName);
         icon = (Sprite)EditorGUILayout.ObjectField("Icon:", icon, typeof(Sprite), false);
@@ -27,7 +31,7 @@ public abstract class BaseItemCreation<T> : EditorWindow where T : BaseItem
         rarity = (Rarity)EditorGUILayout.EnumPopup("Rarity:", rarity);
     }
 
-    protected void CreateItem<T>() where T : BaseItem
+    protected virtual T CreateItem<T>() where T : BaseItem
     {
         T newItem = CreateInstance<T>();
 
@@ -58,13 +62,48 @@ public abstract class BaseItemCreation<T> : EditorWindow where T : BaseItem
         fullPath = AssetDatabase.GenerateUniqueAssetPath(fullPath);
 
         AssetDatabase.CreateAsset(newItem, fullPath);
-        
+
         newItem.itemName = itemName;
         newItem.baseValue = baseValue;
         newItem.rarity = rarity;
+        newItem.icon = icon;
+        newItem.description = description;
+        newItem.requiredLevel = requiredLevel;
         
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+        
+        return newItem;
+    }
+
+    protected virtual bool ValidateItem()
+    {
+        // Validate the item properties
+        if (string.IsNullOrEmpty(itemName))
+        {
+            Debug.LogError("Item name cannot be empty.");
+            return false;
+        }
+
+        if (icon == null)
+        {
+            Debug.LogError("Item icon cannot be null.");
+            return false;
+        }
+
+        if (baseValue < 0)
+        {
+            Debug.LogError("Base value cannot be negative.");
+            return false;
+        }
+
+        if (requiredLevel < 0)
+        {
+            Debug.LogError("Required level cannot be negative.");
+            return false;
+        }
+
+        return true;
     }
 
 }
