@@ -7,6 +7,7 @@ public class Weapon : BaseItem
 {
     [Header("Weapon Properties")]
     public WeaponType weaponType;
+    public string Name;
     public float attackPower;
     public float attackSpeed;
     public float durability; // Durability of the weapon

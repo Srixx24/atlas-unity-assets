@@ -6,6 +6,7 @@ using UnityEngine;
 public abstract class BaseItemCreation<T> : EditorWindow where T : BaseItem
 {
     protected string itemName;
+    protected string newItemName;
     protected Sprite icon;
     protected string description;
     protected float baseValue;
@@ -78,6 +79,7 @@ public abstract class BaseItemCreation<T> : EditorWindow where T : BaseItem
 
     protected virtual bool ValidateItem()
     {
+        newItemName = itemName;
         // Validate the item properties
         if (string.IsNullOrEmpty(itemName))
         {

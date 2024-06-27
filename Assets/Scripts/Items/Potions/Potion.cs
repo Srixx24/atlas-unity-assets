@@ -7,6 +7,7 @@ public class Potion : BaseItem
 {
     [Header("Potion Properties")]
     public PotionEffect potionEffect;
+    public string potionName;
     public float effectPower;
     public float duration; // Duration of the effect
     public float cooldown; // Cooldown time for using again

@@ -17,6 +17,7 @@ public class WeaponCreation : BaseItemCreation<Weapon>
     public float range;
     public float criticalHitChance;
     private Weapon selectedWeapon = null;
+    private WeaponDatabase weaponDatabase;
 
     private const string WEAPON_ASSET_PATH = "Assets/Items/Weapons/";
     
@@ -29,17 +30,33 @@ public class WeaponCreation : BaseItemCreation<Weapon>
 
     void OnGUI()
     {
-        DrawItemProperties();
-        
+        DrawWeaponProperties();
+
         if (GUILayout.Button("Create Weapon"))
         {
             CreateItem<Weapon>();
-            
         }
     }
 
-    protected override void DrawItemProperties()
+    // Unused, will comeback to work of functionality
+    private void CreateWeaponButton()
     {
+        if (!ValidateWeapon())
+        {
+            // Do not create the Weapon
+            return;
+        }
+        else
+        {
+            // Create the Weapon
+            CreateItem<Weapon>();
+        }
+    }
+
+    private void DrawWeaponProperties()
+    {
+        DrawItemProperties();
+
         EditorGUILayout.LabelField("Weapon Properties", EditorStyles.boldLabel);
 
         if (selectedWeapon != null)
@@ -62,8 +79,10 @@ public class WeaponCreation : BaseItemCreation<Weapon>
         }
     }
 
-    protected override bool ValidateItem()
+    private bool ValidateWeapon()
     {
+        ValidateItem();
+        
         if (string.IsNullOrEmpty(newWeaponName))
         {
             EditorUtility.DisplayDialog("Invalid Weapon Name", "Please enter a name for the new weapon.", "OK");

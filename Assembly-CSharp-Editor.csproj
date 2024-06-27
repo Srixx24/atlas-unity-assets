@@ -62,9 +62,16 @@
     <Analyzer Include="C:\Users\Jackie\.vscode\extensions\visualstudiotoolsforunity.vstuc-1.0.2\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Editor\WeaponDatabase.cs" />
     <Compile Include="Assets\Editor\ItemDatabase.cs" />
     <Compile Include="Assets\Editor\BaseItemCreation.cs" />
+    <Compile Include="Assets\Editor\PotionCreation.cs" />
+    <Compile Include="Assets\Editor\WeaponCreation.cs" />
+    <Compile Include="Assets\Editor\StatisticsPage.cs" />
+    <Compile Include="Assets\Editor\ArmorCreation.cs" />
     <Compile Include="Assets\Editor\DatabasesManager.cs" />
+    <Compile Include="Assets\Editor\PotionDatabase.cs" />
+    <Compile Include="Assets\Editor\ArmorDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

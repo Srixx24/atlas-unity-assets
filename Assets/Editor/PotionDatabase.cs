@@ -22,15 +22,47 @@ public class PotionDatabase : ItemDatabase<Potion>
 
     [Header("Potion Database")]
     public bool showPotionCreationButton = true;
+    GUIStyle itemNameText = new GUIStyle(EditorStyles.largeLabel);
+    GUIStyle miniTitle;
+
+
+    private void OnEnable()
+    {
+        // Initialize the large, bold, green style
+        itemNameText = new GUIStyle(EditorStyles.largeLabel);
+        itemNameText.fontStyle = FontStyle.Bold;
+        itemNameText.fontSize = 16;
+        itemNameText.normal.textColor = Color.green;
+
+        // Initialize the blue style
+        miniTitle = new GUIStyle(EditorStyles.boldLabel);
+        miniTitle.normal.textColor = new Color32(0, 255, 255, 255);
+    }
 
     private void OnGUI()
     {
+        GetItemCount();
+        EditorGUILayout.Space();
+
+        DrawTopLeftOptions();
+        EditorGUILayout.Space();
+
         if (showPotionCreationButton)
         {
-            if (GUILayout.Button("Create New Potion"))
+            GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+            buttonStyle.fontSize = 15;
+            buttonStyle.fontStyle = FontStyle.Bold;
+            buttonStyle.padding = new RectOffset(20, 20, 4, 4);
+            buttonStyle.normal.textColor = Color.green;
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Create New Potion", buttonStyle, GUILayout.Width(200), GUILayout.Height(40)))
             {
                 PotionCreation.ShowWindow();
             }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
         }
 
         Potion[] potions = AssetDatabase.FindAssets("t:Potion", new[] { POTION_ASSET_PATH })
@@ -42,7 +74,12 @@ public class PotionDatabase : ItemDatabase<Potion>
         if (potions.Length > 0)
         {
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.LabelField("Potion List", EditorStyles.boldLabel);
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Potion List", itemNameText);
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+
 
             // Create a ScrollView to make the list scrollable
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, true, GUILayout.ExpandHeight(true));
@@ -63,6 +100,7 @@ public class PotionDatabase : ItemDatabase<Potion>
                     }
                 }
 
+                EditorGUILayout.Space(2);
                 EditorGUILayout.EndVertical();
             }
             // End the ScrollView
@@ -75,9 +113,11 @@ public class PotionDatabase : ItemDatabase<Potion>
         if (selectedPotion != null)
         {
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(selectedPotion.itemName, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(selectedPotion.itemName, itemNameText);
+            GUIStyle deleteButtonText = new GUIStyle(EditorStyles.boldLabel);
+            deleteButtonText.normal.textColor = Color.red;
             GUILayout.FlexibleSpace();
-        if (GUILayout.Button("Delete"))
+        if (GUILayout.Button("Delete", deleteButtonText))
             {
                 bool Delete = EditorUtility.DisplayDialog($"Delete {selectedPotion.itemName}?", $"Are you want to delete {selectedPotion.itemName}?", "Yes", "No");
                 if (Delete)
@@ -105,7 +145,7 @@ public class PotionDatabase : ItemDatabase<Potion>
 
     protected override void DrawItemList()
     {
-        EditorGUILayout.LabelField("Potion Properties", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Potion Properties", miniTitle);
 
         if (selectedPotion != null)
         {
@@ -125,20 +165,9 @@ public class PotionDatabase : ItemDatabase<Potion>
     // Handles the display and modification of the potion properties
     protected override void DrawPropertiesSection()
     {
-        EditorGUILayout.LabelField("Potion Properties", EditorStyles.boldLabel);
-
         if (selectedPotion != null)
         {
-            // Name
-            string newName = EditorGUILayout.TextField("Name", selectedPotion.itemName, GUILayout.Width(200f));
-            if (newName != selectedPotion.itemName && !IsValidItemName(newName))
-            {
-                EditorGUILayout.HelpBox("Item name cannot contain special characters (except spaces, dashes, and single quotes).", MessageType.Error);
-            }
-            else
-            {
-                selectedPotion.itemName = newName;
-            }
+            GUILayout.Label("Slide to change values or enter your own", miniTitle);
 
             // Potion Effect
             selectedPotion.potionEffect = (PotionEffect)EditorGUILayout.EnumPopup("Potion Effect", selectedPotion.potionEffect, GUILayout.Width(200f));
@@ -186,6 +215,11 @@ public class PotionDatabase : ItemDatabase<Potion>
     {
         // Check if the name contains only allowed characters
         return string.IsNullOrEmpty(name) || name.All(c => char.IsLetterOrDigit(c) || c == ' ' || c == '-' || c == '\'');
+    }
+
+    public void GetItemCount()
+    {
+        GUILayout.Label($"Total Potions: {AssetDatabase.FindAssets("t:Potion").Length}");
     }
 
     protected override void ExportItemsToCSV()

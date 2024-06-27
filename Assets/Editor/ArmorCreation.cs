@@ -18,7 +18,7 @@ public class ArmorCreation : BaseItemCreation<Armor>
     private const string ARMOR_ASSET_PATH = "Assets/Items/Armor/";
 
 
-    [MenuItem("Tools/Armor Creation")]  
+    [MenuItem("Tools/Armor Creation")]
     public static void ShowWindow()
     {
         GetWindow<ArmorCreation>("Armor Creation");
@@ -27,11 +27,25 @@ public class ArmorCreation : BaseItemCreation<Armor>
     void OnGUI()
     {
         DrawArmorProperties();
-    
+
         if (GUILayout.Button("Create Armor"))
         {
             CreateItem<Armor>();
-        
+        }
+    }
+
+    // Unused, will comeback to work of functionality
+    private void CreateArmorButton()
+    {
+        if (!ValidateArmor())
+        {
+            // Do not create Armor
+            return;
+        }
+        else
+        {
+            // Create the Armor
+            CreateItem<Armor>();
         }
     }
 

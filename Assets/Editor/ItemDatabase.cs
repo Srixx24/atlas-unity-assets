@@ -19,14 +19,14 @@ public abstract class ItemDatabase<T> : EditorWindow where T : class
     private void OnGUI()
     {
         GUILayout.BeginHorizontal();
-        
         DrawItemList();
+        GUILayout.EndHorizontal();
         
         GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(propertiesSectionWidth));
         DrawPropertiesSection();
         GUILayout.EndVertical();
 
-        GUILayout.EndHorizontal();
+        
     }
 
     protected void DeleteSelectedItem()

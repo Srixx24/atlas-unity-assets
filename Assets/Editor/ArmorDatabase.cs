@@ -12,6 +12,7 @@ public class ArmorDatabase : ItemDatabase<Armor>
     private Armor selectedArmor = null;
     private Vector2 scrollPos;
     private const string ARMOR_ASSET_PATH = "Assets/Items/Armor/";
+    
 
     [MenuItem("Window/Item Manager/Armor Database")]
     public static void ShowWindow()
@@ -21,15 +22,47 @@ public class ArmorDatabase : ItemDatabase<Armor>
 
     [Header("Armor Database")]
     public bool showArmorCreationButton = true;
+    GUIStyle itemNameText = new GUIStyle(EditorStyles.largeLabel);
+    GUIStyle miniTitle;
+
+
+    private void OnEnable()
+    {
+        // Initialize the large, bold, green style
+        itemNameText = new GUIStyle(EditorStyles.largeLabel);
+        itemNameText.fontStyle = FontStyle.Bold;
+        itemNameText.fontSize = 16;
+        itemNameText.normal.textColor = Color.green;
+
+        // Initialize the blue style
+        miniTitle = new GUIStyle(EditorStyles.boldLabel);
+        miniTitle.normal.textColor = new Color32(0, 255, 255, 255);
+    }
 
     private void OnGUI()
     {
+        GetItemCount();
+        EditorGUILayout.Space();
+
+        DrawTopLeftOptions();
+        EditorGUILayout.Space();
+
         if (showArmorCreationButton)
         {
-            if (GUILayout.Button("Create New Armor"))
+           GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+            buttonStyle.fontSize = 15;
+            buttonStyle.fontStyle = FontStyle.Bold;
+            buttonStyle.padding = new RectOffset(20, 20, 4, 4);
+            buttonStyle.normal.textColor = Color.green;
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Create New Armor", buttonStyle, GUILayout.Width(200), GUILayout.Height(40)))
             {
-                ArmorCreation.ShowWindow();
+                ArmorCreation.ShowWindow();;
             }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
         }
 
         Armor[] armors = AssetDatabase.FindAssets("t:Armor", new[] { ARMOR_ASSET_PATH })
@@ -41,7 +74,11 @@ public class ArmorDatabase : ItemDatabase<Armor>
         if (armors.Length > 0)
         {
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.LabelField("Armor List", EditorStyles.boldLabel);
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Armor List", itemNameText);
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
             // Create a ScrollView to make the list scrollable
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, true, GUILayout.ExpandHeight(true));
@@ -50,7 +87,7 @@ public class ArmorDatabase : ItemDatabase<Armor>
             {
                 bool isSelected = selectedArmor != null && selectedArmor.itemName == armors[x].itemName;
                 EditorGUILayout.BeginVertical();
-                if (GUILayout.Button(new GUIContent(armors[x].itemName, armors[x].icon != null ? armors[x].icon.texture : null), isSelected ? EditorStyles.boldLabel : EditorStyles.label, GUILayout.Width(100)))
+                if (GUILayout.Button(new GUIContent(armors[x].itemName, armors[x].icon != null ? armors[x].icon.texture : null), isSelected ? EditorStyles.boldLabel : EditorStyles.label, GUILayout.Width(75)))
                 {
                     if (isSelected)
                     {
@@ -62,6 +99,7 @@ public class ArmorDatabase : ItemDatabase<Armor>
                     }
                 }
 
+                EditorGUILayout.Space(2);
                 EditorGUILayout.EndVertical();
             }
             // End the ScrollView
@@ -69,24 +107,7 @@ public class ArmorDatabase : ItemDatabase<Armor>
 
             EditorGUILayout.EndVertical();
         }
-
-        // Delete item and confirm
-        if (selectedArmor != null)
-        {
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(selectedArmor.itemName, EditorStyles.boldLabel);
-            GUILayout.FlexibleSpace();
-        if (GUILayout.Button("Delete"))
-            {
-                bool Delete = EditorUtility.DisplayDialog($"Delete {selectedArmor.itemName}?", $"Are you want to delete {selectedArmor.itemName}?", "Yes", "No");
-                if (Delete)
-                {
-                    DeleteArmor(selectedArmor);
-                    selectedArmor = null;
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-        }
+        DeleteArmor(selectedArmor);
 
         DrawItemList();
 
@@ -95,16 +116,35 @@ public class ArmorDatabase : ItemDatabase<Armor>
 
     private void DeleteArmor(Armor armor)
     {
-        if (armor != null)
+        // Delete item and confirm
+        if (selectedArmor != null)
         {
-            AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(armor));
-            AssetDatabase.Refresh();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(selectedArmor.itemName, itemNameText);
+            GUIStyle deleteButtonText = new GUIStyle(EditorStyles.boldLabel);
+            deleteButtonText.normal.textColor = Color.red;
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Delete", deleteButtonText))
+            {
+                bool Delete = EditorUtility.DisplayDialog($"Delete {selectedArmor.itemName}?", $"Are you want to delete {selectedArmor.itemName}?", "Yes", "No");
+                if (Delete)
+                {
+                    if (armor != null)
+                    {
+                        AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(armor));
+                        AssetDatabase.Refresh();
+                    }
+                    selectedArmor = null;
+                }
+            }
+            EditorGUILayout.EndHorizontal();
         }
     }
 
     protected override void DrawItemList()
     {
-        EditorGUILayout.LabelField("Armor Properties", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Armor Properties", miniTitle);
 
         if (selectedArmor != null)
         {
@@ -124,20 +164,9 @@ public class ArmorDatabase : ItemDatabase<Armor>
     // Handles the display and modification of the armor properties
     protected override void DrawPropertiesSection()
     {
-        EditorGUILayout.LabelField("Armor Properties", EditorStyles.boldLabel);
-
         if (selectedArmor != null)
         {
-            // Name
-            string newName = EditorGUILayout.TextField("Name", selectedArmor.itemName, GUILayout.Width(200f));
-            if (newName != selectedArmor.itemName && !IsValidItemName(newName))
-            {
-                EditorGUILayout.HelpBox("Item name cannot contain special characters (except spaces, dashes, and single quotes).", MessageType.Error);
-            }
-            else
-            {
-                selectedArmor.itemName = newName;
-            }
+            GUILayout.Label("Slide to change values or enter your own", miniTitle);
 
             // Defense Power
             float newDefensePower = EditorGUILayout.FloatField("Defense Power", selectedArmor.defensePower, GUILayout.Width(200f));
@@ -192,6 +221,11 @@ public class ArmorDatabase : ItemDatabase<Armor>
     {
         // Check if the name contains only allowed characters
         return string.IsNullOrEmpty(name) || name.All(c => char.IsLetterOrDigit(c) || c == ' ' || c == '-' || c == '\'');
+    }
+
+    public void GetItemCount()
+    {
+        GUILayout.Label($"Total Armors: {AssetDatabase.FindAssets("t:Armor").Length}");
     }
 
     protected override void ExportItemsToCSV()

@@ -22,7 +22,7 @@ public class PotionCreation : BaseItemCreation<Potion>
     private const string POTION_ASSET_PATH = "Assets/Items/Potions/";
 
 
-    [MenuItem("Tools/Potion Creation")]  
+    [MenuItem("Tools/Potion Creation")]
     public static void ShowWindow()
     {
         GetWindow<PotionCreation>("Potion Creation");
@@ -34,8 +34,22 @@ public class PotionCreation : BaseItemCreation<Potion>
 
         if (GUILayout.Button("Create Potion"))
         {
+           CreateItem<Potion>();
+        }
+    }
+
+    // Unused, will comeback to work of functionality
+    private void CreatePotionButton()
+    {
+        if (!ValidatePotion())
+        {
+            // Do not create the potion
+            return;
+        }
+        else
+        {
+            // Create the potion
             CreateItem<Potion>();
-    
         }
     }
 
@@ -60,7 +74,7 @@ public class PotionCreation : BaseItemCreation<Potion>
             duration = EditorGUILayout.FloatField("Duration", duration);
             cooldown = EditorGUILayout.FloatField("Cooldown", cooldown);
             isStackable = EditorGUILayout.Toggle("Is Stackable", isStackable);
-
+    
         }
     }
 
@@ -133,5 +147,6 @@ public class PotionCreation : BaseItemCreation<Potion>
         {
             Debug.Log("Item already exists");       
         }
+        ValidatePotion();
     }
 }
