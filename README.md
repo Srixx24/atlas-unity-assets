@@ -26,7 +26,8 @@ Weapons database
 
 # Architecture Flow:
 
-boop
+![Flow chart1](https://github.com/Srixx24/atlas-unity-assets/assets/144152489/b3f74a33-7142-4487-a38f-ea16a15b53cd)
+
 
 <br>
 <br>
@@ -44,6 +45,7 @@ boop
 -Use the package as you see fit from there.
 
 <br>
+
 # You can get this package here
 
 https://drive.google.com/file/d/1i0NuImzl7N_N2V2fbRevdFAMJc3u10j6/view?usp=sharing
