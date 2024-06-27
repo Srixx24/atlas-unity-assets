@@ -48,6 +48,4 @@ Weapons database
 
 # You can get this package here
 
-https://drive.google.com/file/d/1i0NuImzl7N_N2V2fbRevdFAMJc3u10j6/view?usp=sharing
-<br>
-https://drive.google.com/file/d/1pqJ8UAiQqgO7PEOgznJsVfWU1fyBD9lT/view?usp=sharing
+https://drive.google.com/drive/folders/121A-YoZrTIXEi0NK5fLeH9l8Wy2yZLft?usp=sharing
